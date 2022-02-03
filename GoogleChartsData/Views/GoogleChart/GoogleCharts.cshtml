@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Result Visualization</title>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                url: '@Url.Action("VisualizeEmployeeResult", "GoogleChart")',
+                success: function (result) {
+                    google.charts.load('current', {
+                        'packages': ['corechart']
+                    });
+                    google.charts.setOnLoadCallback(function () {
+                        drawChart(result);
+                    });
+                }
+            });
+        });
+
+        function drawChart(result) {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Name');
+            data.addColumn('number', 'Rank');
+            var dataArray = [];
+
+            $.each(result, function (i, obj) {
+                dataArray.push([obj.empName, obj.rankObtained]);
+            });
+            data.addRows(dataArray);
+
+            var columnChartOptions = {
+                title: "Employee Performance",
+                width: 500,
+                height: 300,
+                bar: { groupWidth: "5%" }
+            };
+
+            var donutChartOptions = {
+                title: "Employee Performance",
+                width: 500,
+                height: 300,
+                pieHole: 0.5,
+            };
+
+            var lineChartOptions = {
+                title: "Employee Performance",
+                width: 500,
+                height: 300,
+                bar: { groupWidth: "20%" },
+            };
+
+            var pieChartOptions = {
+                title: "Employee Performance",
+                width: 500,
+                height: 300,
+                bar: { groupWidth: "20%" },
+            };
+
+            var columnChart = new google.visualization.ColumnChart(document
+                .getElementById('columnchart_div'));
+
+            columnChart.draw(data, columnChartOptions);
+
+            var donutChart = new google.visualization.PieChart(document
+                .getElementById('donutchart_div'));
+
+            donutChart.draw(data, donutChartOptions);
+
+            var lineChart = new google.visualization.LineChart(document
+                .getElementById('linechart_div'));
+
+            lineChart.draw(data, lineChartOptions);
+
+            var pieChart = new google.visualization.PieChart(document
+                .getElementById('piechart_div'));
+
+            pieChart.draw(data, pieChartOptions);
+
+        }
+    </script>
+</head>
+<body>
+    <div class="row">
+        <div class="col-sm-6 col-xs-12">
+            <div class="panel panel-default chartJs">
+                <div class="panel-heading">
+                    <div class="card-title">
+                        <div class="title">Column Chart</div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div id="columnchart_div" class="chart" width="710" height="355" style="width: 568px; height: 284px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xs-12">
+            <div class="panel panel-default chartJs">
+                <div class="panel-heading">
+                    <div class="card-title">
+                        <div class="title">Donut Chart</div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div id="donutchart_div" class="chart" width="710" height="355" style="width: 568px; height: 284px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 col-xs-12">
+            <div class="panel panel-default chartJs">
+                <div class="panel-heading">
+                    <div class="card-title">
+                        <div class="title">Line Chart</div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div id="linechart_div" class="chart" width="710" height="355" style="width: 568px; height: 284px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xs-12">
+            <div class="panel panel-default chartJs">
+                <div class="panel-heading">
+                    <div class="card-title">
+                        <div class="title">Pie Chart</div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div id="piechart_div" class="chart" width="710" height="355" style="width: 568px; height: 284px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @*<div class="contents">
+            <div class="col-md-6 quarter" id="columnchart_div"></div>
+            <div class="col-md-6 quarter" id="donutchart_div"></div>
+            <div class="col-md-6 quarter" id="linechart_div"></div>
+            <div class="col-md-6 quarter" id="piechart_div"></div>
+        </div>*@
+
+    @*<table>
+            <tr>
+                <td><div id="columnchart_div"></div></td>
+                <td><div id="donutchart_div"></div></td>
+            </tr>
+            <tr>
+                <td><div id="linechart_div"></div></td>
+                <td><div id="piechart_div"></div></td>
+            </tr>
+        </table>*@
+</body>
+</html>
+
+<style>
+    html, body {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        min-height: 100%;
+        overflow-x: hidden;
+        overflow-y: hidden;
+    }
+
+    .quarter {
+        width: 50%;
+        height: 100%;
+        float: left;
+    }
+
+    .contents {
+        height: 50%;
+        width: 100%;
+    }
+</style>
